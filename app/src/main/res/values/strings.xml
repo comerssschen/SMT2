@@ -1,0 +1,62 @@
+<resources>
+    <string name="app_name">每日付自助购物系统</string>
+    <!--  more-->
+    <!--单位-->
+    <string name="units_tin">Can</string>
+    <string name="units_money">$</string>
+    <string name="units_money_units">$</string>
+    <!--商品-->
+    <string name="goods_juice">Juice</string>
+    <string name="goods_snacks">Snacks</string>
+    <string name="goods_apple">Apple</string>
+    <string name="goods_pear">Pear</string>
+    <string name="goods_banana">Banana</string>
+    <string name="goods_pitaya">Pitaya</string>
+    <string name="goods_coke">Coke</string>
+    <string name="goods_sprite">Sprite</string>
+    <string name="goods_red_bull">Red Bull</string>
+    <string name="goods_sc_1">Kiwi</string>
+    <string name="goods_sc_2">Pineapple</string>
+    <string name="goods_sc_3">Lemon</string>
+    <string name="goods_sc_4">Tangerine</string>
+    <string name="goods_scs_1">Pepper</string>
+    <string name="goods_scs_2">Radish</string>
+    <string name="goods_scs_3">Cabbage</string>
+    <string name="goods_scs_4">Purple cabbage</string>
+
+    <string name="goods_1">Coca cola</string>
+    <string name="goods_2">Sprite</string>
+    <string name="goods_3">Green tea</string>
+    <string name="goods_4">Oolong</string>
+    <string name="goods_5">Pine nut </string>
+    <string name="goods_6">Melon seeds</string>
+    <string name="goods_7">Biscuits</string>
+    <string name="goods_8">Sea sedge biscuits</string>
+
+    <!--提示用语-->
+    <string name="tips_cancel">Cancel</string>
+    <string name="tips_yes">OK</string>
+    <string name="tips_exit">Press again to exit</string>
+
+    <!--收银演示菜单-->
+    <string name="menus_title">Cashier Demo</string>
+    <string name="menus_more">More</string>
+
+    <!--购物车菜单-->
+    <string name="shop_car">Cart</string>
+    <string name="shop_car_nothing">There are no items in your cart!</string>
+    <string name="goods_nothing">There are nothing items in your cart!</string>
+    <string name="shop_car_clear">Empty</string>
+    <string name="shop_car_code">ID</string>
+    <string name="shop_car_goods_name">Name</string>
+    <string name="shop_car_unit_money">Amount</string>
+    <string name="shop_car_totle2">Total:</string>
+    <string name="shop_car_go_pay">PAY NOW</string>
+    <string name="more_title_2">Commodity management</string>
+    <string name="more_title_3">Method of payment</string>
+    <string name="more_goods_1">Select the item to display</string>
+    <string name="more_goods_4">Unweighing goods</string>
+    <string name="more_goods_5">Drinks and snacks</string>
+    <!--电子秤-->
+    <string name="delete">delete</string>
+</resources>

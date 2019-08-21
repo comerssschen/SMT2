@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+apply plugin: 'org.greenrobot.greendao'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.greenrobot:greendao-gradle-plugin:3.2.2'
+    }
+}
+
+greendao {
+    schemaVersion 1
+}
+android {
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.sunmi.sunmit2demo"
+        minSdkVersion 21
+        targetSdkVersion 28
+        versionCode 2
+        versionName "1.3.0"
+        ndk {
+            // 设置支持的SO库架构
+            abiFilters 'armeabi', 'x86', 'armeabi-v7a'//, 'x86_64', 'arm64-v8a'
+        }
+    }
+    repositories {
+        flatDir {
+            dirs 'libs'
+        }
+    }
+
+    buildTypes {
+        release {
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+    }
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+    useLibrary 'org.apache.http.legacy'
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+    implementation 'com.android.support:support-v4:28.0.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    testImplementation 'junit:junit:4.12'
+    implementation 'com.flipboard:bottomsheet-core:1.5.3'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'org.greenrobot:greendao-generator:3.2.2'
+    implementation 'com.squareup.okhttp:okhttp:2.4.0'
+    implementation files('libs/icod_3.1.1.jar')
+    //桑达打印
+    implementation 'com.blankj:utilcode:1.23.0'
+    implementation 'com.jakewharton:butterknife:9.0.0-rc1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
+    implementation 'com.lzy.net:okgo:3.0.4'
+    implementation 'cn.yipianfengye.android:zxing-library:2.2'
+    implementation files('libs/paymentservice.jar')
+}

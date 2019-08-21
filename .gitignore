@@ -1,0 +1,15 @@
+.gradle/
+.idea/
+build/
+release/
+test/
+bin/
+gen/
+proguard/
+local.properties
+.classpath
+.project
+*.class
+*.iml
+*.ipr
+*.iws

@@ -1,0 +1,57 @@
+<resources>
+    <string name="app_name">每日付自助购物系统</string>
+    <!--单位-->
+    <string name="units_tin">瓶</string>
+    <string name="units_money">¥</string>
+    <string name="units_money_units">￥</string>
+    <!--商品-->
+    <string name="goods_juice">饮料</string>
+    <string name="goods_snacks">零食</string>
+    <string name="goods_apple">苹果</string>
+    <string name="goods_pear">梨子</string>
+    <string name="goods_banana">香蕉</string>
+    <string name="goods_pitaya">火龙果</string>
+    <string name="goods_coke">可乐</string>
+    <string name="goods_sprite">饮料</string>
+    <string name="goods_red_bull">红牛</string>
+    <string name="goods_sc_1">猕猴桃</string>
+    <string name="goods_sc_2">菠萝</string>
+    <string name="goods_sc_3">柠檬</string>
+    <string name="goods_sc_4">橘子</string>
+    <string name="goods_scs_1">辣椒</string>
+    <string name="goods_scs_2">萝卜</string>
+    <string name="goods_scs_3">包菜</string>
+    <string name="goods_scs_4">紫甘蓝</string>
+    <string name="goods_1">可口可乐零度</string>
+    <string name="goods_2">雪碧零卡</string>
+    <string name="goods_3">统一绿茶</string>
+    <string name="goods_4">三得利乌龙茶</string>
+    <string name="goods_5">百草味东北松子</string>
+    <string name="goods_6">百草味话梅瓜子</string>
+    <string name="goods_7">五谷味梳打饼干</string>
+    <string name="goods_8">海苔味梳打饼干</string>
+    <!--提示用语-->
+    <string name="tips_cancel">取消</string>
+    <string name="tips_yes">确定</string>
+    <string name="tips_exit">再按一次退出</string>
+    <!--收银演示菜单-->
+    <string name="menus_title">收银演示程序</string>
+    <string name="menus_more">更多功能</string>
+    <!--购物车菜单-->
+    <string name="shop_car">购物车</string>
+    <string name="shop_car_nothing">购物车中没有商品哟！</string>
+    <string name="goods_nothing">暂无商品</string>
+    <string name="shop_car_clear">清空</string>
+    <string name="shop_car_code">编号</string>
+    <string name="shop_car_goods_name">品名</string>
+    <string name="shop_car_unit_money">金额</string>
+    <string name="shop_car_totle2">合计:</string>
+    <string name="shop_car_go_pay">快速支付</string>
+    <string name="more_title_2">商品管理</string>
+    <string name="more_title_3">支付方式</string>
+    <string name="more_goods_1">选择需要展示的商品</string>
+    <string name="more_goods_4">无需称重类商品</string>
+    <string name="more_goods_5">饮料、零食</string>
+    <string name="delete">删除</string>
+
+</resources>
