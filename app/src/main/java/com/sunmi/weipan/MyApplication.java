@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.Log;
 
 
+import com.sunmi.payment.PaymentService;
 import com.sunmi.weipan.bean.DaoMaster;
 import com.sunmi.weipan.bean.DaoSession;
 
@@ -27,6 +28,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        PaymentService.getInstance().init(this);
         app = this;
         this.initDB();
         new Thread(new Runnable() {

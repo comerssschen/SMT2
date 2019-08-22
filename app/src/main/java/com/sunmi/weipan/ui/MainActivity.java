@@ -12,9 +12,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -23,7 +20,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -32,17 +28,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.blankj.utilcode.util.KeyboardUtils;
 import com.blankj.utilcode.util.ObjectUtils;
 import com.blankj.utilcode.util.ToastUtils;
 import com.flipboard.bottomsheet.BottomSheetLayout;
 import com.google.gson.Gson;
-import com.sunmi.extprinterservice.ExtPrinterService;
 import com.sunmi.payment.PaymentService;
 import com.sunmi.weipan.bean.Config;
 import com.sunmi.weipan.bean.PayResultBean;
-import com.sunmi.weipan.bean.Request;
 import com.sunmi.weipan.BaseActivity;
 import com.sunmi.weipan.R;
+import com.sunmi.weipan.bean.Request;
 import com.sunmi.weipan.utils.SucessEvent;
 import com.sunmi.weipan.adapter.GoodsAdapter;
 import com.sunmi.weipan.adapter.SusceeAdapter;
@@ -64,6 +60,8 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import woyou.aidlservice.jiuiv5.IWoyouService;
 
 
 public class MainActivity extends BaseActivity implements View.OnClickListener {
@@ -101,9 +99,8 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private RelativeLayout rlCar;
     private boolean isRealDeal;
     private int totalCount = 0;
-    private EditText etScan;
     public static KPrinterPresenter kPrinterPresenter;
-    private ExtPrinterService extPrinterService = null;//k1 打印服务
+    private IWoyouService woyouService = null;//k1 打印服务
     private ResultReceiver resultReceiver;
     private Gson gson = new Gson();
 
@@ -114,7 +111,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     @Subscribe
     public void onEvent(SucessEvent event) {
-        kPrinterPresenter.print(menus, "55555");
+        kPrinterPresenter.print(menus, event.getMsg());
         totalCount = 0;
         if (!isVertical) {
             llyShopcar.setVisibility(View.GONE);
@@ -137,6 +134,13 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent = new Intent();
+        intent.setPackage("woyou.aidlservice.jiuiv5");
+        intent.setAction("woyou.aidlservice.jiuiv5.IWoyouService");
+        bindService(intent, connService, Context.BIND_AUTO_CREATE);
+
+        registerResultReceiver();
+
         EventBus.getDefault().register(MainActivity.this);
         DisplayMetrics dm = new DisplayMetrics();
         getWindow().getWindowManager().getDefaultDisplay().getMetrics(dm);
@@ -188,24 +192,53 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
 
     private Handler handler = new Handler();
 
-    /**
-     * 延迟线程，看是否还有下一个字符输入
-     */
-    private Runnable delayRun = new Runnable() {
 
-        @Override
-        public void run() {
-            scanResult(etScan.getText().toString().replace(" ", "").replace("\n", ""));
-            etScan.setText("");
-        }
-    };
+    private StringBuilder sb = new StringBuilder();
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!ObjectUtils.isEmpty(etScan)) {
-            etScan.requestFocus();
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        int action = event.getAction();
+        switch (action) {
+            case KeyEvent.ACTION_DOWN:
+                int unicodeChar = event.getUnicodeChar();
+                if (unicodeChar != 0) {
+                    sb.append((char) unicodeChar);
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_UP) {
+                    return super.dispatchKeyEvent(event);
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_VOLUME_DOWN) {
+                    return super.dispatchKeyEvent(event);
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
+                    return super.dispatchKeyEvent(event);
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_MENU) {
+                    return super.dispatchKeyEvent(event);
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_HOME) {
+                    return super.dispatchKeyEvent(event);
+                }
+                if (event.getKeyCode() == KeyEvent.KEYCODE_POWER) {
+                    return super.dispatchKeyEvent(event);
+                }
+                final int len = sb.length();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (len != sb.length()) return;
+                        if (sb.length() > 0) {
+                            String result = sb.toString().replace(" ", "").replace("\n", "");
+                            scanResult(result);
+                            sb.setLength(0);
+                        }
+                    }
+                }, 200);
+                return true;
+            default:
+                break;
         }
+        return super.dispatchKeyEvent(event);
     }
 
     private void registerResultReceiver() {
@@ -220,9 +253,10 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 PayResultBean response = gson.fromJson(result, PayResultBean.class);
                 switch (response.getResultCode()) {
                     case "T00"://交易成功
-                        kPrinterPresenter.print(menus, "支付宝扫脸");
                         Intent intent = new Intent(MainActivity.this, SucessActivity.class);
-                        intent.putExtra("menus", (Serializable) result);
+//                        intent.putExtra("menus", (Serializable) result);
+                        intent.putExtra("menus", menus);
+                        intent.putExtra("type", "支付宝扫脸");
                         intent.putExtra("count", totalCount);
                         startActivity(intent);
                         break;
@@ -241,51 +275,18 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
     private ServiceConnection connService = new ServiceConnection() {
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            extPrinterService = null;
+            woyouService = null;
         }
 
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            extPrinterService = ExtPrinterService.Stub.asInterface(service);
-            kPrinterPresenter = new KPrinterPresenter(MainActivity.this, extPrinterService);
+            woyouService = IWoyouService.Stub.asInterface(service);
+            kPrinterPresenter = new KPrinterPresenter(MainActivity.this, woyouService);
         }
     };
 
     private void initView() {
-        Intent intent = new Intent();
-        intent.setPackage("com.sunmi.extprinterservice");
-        intent.setAction("com.sunmi.extprinterservice.PrinterService");
-        bindService(intent, connService, Context.BIND_AUTO_CREATE);
-        registerResultReceiver();
-
-        etScan = findViewById(R.id.et_scan);
-//        etScan.setFocusable(true);
-//        etScan.setFocusableInTouchMode(true);
-        etScan.requestFocus();
-//        etScan.setShowSoftInputOnFocus(false);
-        etScan.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if (delayRun != null) {
-                    //每次editText有变化的时候，则移除上次发出的延迟线程
-                    handler.removeCallbacks(delayRun);
-                }
-                //延迟800ms，如果不再输入字符，则执行该线程的run方法
-                if (!TextUtils.isEmpty(etScan.getText())) {
-                    handler.postDelayed(delayRun, 100);
-                }
-            }
-        });
-
+        KeyboardUtils.hideSoftInput(MainActivity.this);
         TextView view = findViewById(R.id.app_name);
         view.setVisibility(isVertical ? View.INVISIBLE : View.VISIBLE);
         lvMenus = findViewById(R.id.lv_menus);
@@ -340,20 +341,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
             addMenus(bean);
             buildMenuJson(menus);
         }
-//        for (GvBeans mOther : mOthers) {
-//            if (ObjectUtils.equals(mOther.getCode(), code)) {
-//                MenusBean bean = new MenusBean();
-//                bean.setId("" + (menus.size() + 1));
-//                bean.setMoney(mOther.getPrice());
-//                bean.setName(mOther.getName());
-//                bean.setCode(mOther.getCode());
-//                bean.setUnit(mOther.getUnit());
-//                bean.setUnitPrice(mOther.getPrice());
-//                bean.setCount(1);
-//                addMenus(bean);
-//                buildMenuJson(menus);
-//            }
-//        }
     }
 
     private void initAction() {
@@ -591,7 +578,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 PaymentService.getInstance().callPayment(jsonStr);
 
                 mPhotoPopupWindow.dismiss();
-                mPhotoPopupWindow.dismiss();
             }
 
             @Override
@@ -619,7 +605,6 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         mPhotoPopupWindow.showAtLocation(getWindow().getDecorView(),
                 Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL, 0, 0);
     }
-
 
     private View createBottomSheetView() {
         View bottomSheet = LayoutInflater.from(this).inflate(R.layout.sheet_layout, bottomSheetLayout, false);
@@ -677,5 +662,23 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         return super.onKeyDown(keyCode, event);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (woyouService != null) {
+            unbindService(connService);
+        }
+        kPrinterPresenter = null;
+        if (resultReceiver != null) {
+            unregisterReceiver(resultReceiver);
+        }
+
+        menus = null;
+        decimalFormat = new DecimalFormat("0.00");
+        isRealDeal = false;
+        totalCount = 0;
+        mPhotoPopupWindow = null;
+        woyouService = null;//k1 打印服务
+    }
 
 }

@@ -138,6 +138,7 @@ public class ReceiptCodeActivity extends BaseActivity {
                         Intent intent = new Intent(ReceiptCodeActivity.this, SucessActivity.class);
                         intent.putExtra("menus", (Serializable) menus);
                         intent.putExtra("count", totalCount);
+                        intent.putExtra("type", type.equals("1") ? "微信扫码支付" : "支付宝扫码支付");
                         startActivity(intent);
                         finish();
                     }

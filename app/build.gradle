@@ -59,7 +59,7 @@ dependencies {
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'org.greenrobot:greendao-generator:3.2.2'
     implementation 'com.squareup.okhttp:okhttp:2.4.0'
-    implementation files('libs/icod_3.1.1.jar')
+//    implementation files('libs/icod_3.1.1.jar')
     //桑达打印
     implementation 'com.blankj:utilcode:1.23.0'
     implementation 'com.jakewharton:butterknife:9.0.0-rc1'
@@ -67,4 +67,5 @@ dependencies {
     implementation 'com.lzy.net:okgo:3.0.4'
     implementation 'cn.yipianfengye.android:zxing-library:2.2'
     implementation files('libs/paymentservice.jar')
+    implementation files('libs/SmileService1.9.1.jar')
 }

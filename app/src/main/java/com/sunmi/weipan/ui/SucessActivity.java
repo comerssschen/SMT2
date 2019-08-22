@@ -60,6 +60,7 @@ public class SucessActivity extends BaseActivity {
         setContentView(R.layout.activity_sucess);
         ButterKnife.bind(this);
         totalCount = getIntent().getIntExtra("count", 0);
+        String type = getIntent().getStringExtra("type");
         ArrayList<MenusBean> menus = (ArrayList<MenusBean>) getIntent().getSerializableExtra("menus");
         Log.i("test", "menus = " + menus.toString());
         menusAdapter = new SusceeAdapter(this, menus);
@@ -78,7 +79,7 @@ public class SucessActivity extends BaseActivity {
             PayMoney = "0.01";
         }
         tvBtParm1.setText("实付 ￥" + PayMoney);
-        EventBus.getDefault().post(new SucessEvent(""));
+        EventBus.getDefault().post(new SucessEvent(type));
         CountDownHelper helper = new CountDownHelper(tvTimeTiger, 10, 1);
         helper.setOnFinishListener(new CountDownHelper.OnFinishListener() {
             @Override

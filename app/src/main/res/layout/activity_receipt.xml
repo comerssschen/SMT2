@@ -8,27 +8,27 @@
         android:id="@+id/tv_tips"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="50dp"
         android:gravity="center_horizontal"
         android:text="请使用微信扫一扫付款"
         android:textColor="#676767"
-        android:textSize="30sp" />
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/tv_paymoney"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:gravity="center_horizontal"
         android:textColor="#F2143F"
-        android:textSize="60sp" />
+        android:textSize="30sp" />
 
     <ImageView
         android:id="@+id/iv_qrcode"
-        android:layout_width="500dp"
-        android:layout_height="500dp"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="50dp"
         android:scaleType="fitXY" />
 
 </LinearLayout>

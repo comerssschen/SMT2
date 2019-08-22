@@ -507,9 +507,4 @@
             </RelativeLayout>
         </LinearLayout>
     </FrameLayout>
-
-    <EditText
-        android:id="@+id/et_scan"
-        android:layout_width="1dp"
-        android:layout_height="1dp" />
 </LinearLayout>

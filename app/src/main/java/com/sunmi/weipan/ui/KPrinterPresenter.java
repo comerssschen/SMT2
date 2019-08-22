@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.util.Log;
 
-import com.sunmi.extprinterservice.ExtPrinterService;
 import com.sunmi.weipan.R;
 import com.sunmi.weipan.bean.MenusBean;
 import com.sunmi.weipan.fragment.PayModeSettingFragment;
@@ -19,6 +18,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import woyou.aidlservice.jiuiv5.IWoyouService;
+
 /**
  * Created by zhicheng.liu on 2018/4/4
  * address :liuzhicheng@sunmi.com
@@ -28,12 +29,12 @@ import java.util.Locale;
 public class KPrinterPresenter {
     private Context context;
     private static final String TAG = "KPrinterPresenter";
-    private ExtPrinterService mPrinter;
+    private IWoyouService mPrinter;
     String unic = "GBK";
     private String PayMoney;
     private DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
-    public KPrinterPresenter(Context context, ExtPrinterService printerService) {
+    public KPrinterPresenter(Context context, IWoyouService printerService) {
         this.context = context;
         this.mPrinter = printerService;
     }
@@ -45,43 +46,54 @@ public class KPrinterPresenter {
         String divide = "************************************************" + "";
         String divide2 = "-----------------------------------------------" + "";
         try {
-            if (mPrinter.getPrinterStatus() != 0) {
+            if (mPrinter.updatePrinterState() != 1) {
                 return;
             }
-            mPrinter.lineWrap(1);
+            mPrinter.lineWrap(1, null);
             int width = divide2.length() * 5 / 12;
             String goods = formatTitle(width);
-            mPrinter.setAlignMode(1);
-            mPrinter.setFontZoom(fontsizeTitle, fontsizeTitle);
-            mPrinter.sendRawData(boldOn());
-            mPrinter.printText("杭州微盘每日付收款明细");
-            mPrinter.flush();
-            mPrinter.setAlignMode(0);
-            mPrinter.setFontZoom(fontsizeContent, fontsizeContent);
-            mPrinter.sendRawData(boldOff());
-            mPrinter.printText(divide);
-            mPrinter.printText("订单编号：" + SystemClock.uptimeMillis() + "");
-            mPrinter.flush();
-            mPrinter.printText("下单时间：" + formatData(new Date()) + "");
-            mPrinter.flush();
-            mPrinter.printText("支付方式：" + payType);
-            mPrinter.flush();
-            mPrinter.printText(divide);
-            mPrinter.flush();
-            mPrinter.printText(goods + "");
-            mPrinter.flush();
-            mPrinter.printText(divide2);
-            mPrinter.flush();
-            printGoods(menus, fontsizeContent, divide2, width);
-            mPrinter.printText(divide);
-            mPrinter.flush();
-//            mPrinter.printQrCode("https://sunmi.com/", 8, 0);
-            mPrinter.lineWrap(1);
-            mPrinter.setFontZoom(fontsizeContent, fontsizeContent);
-            mPrinter.printText("感谢使用微盘智慧收银！");
-            mPrinter.flush();
-            mPrinter.lineWrap(4);
-            mPrinter.cutPaper(0, 0);
+            mPrinter.setAlignment(1, null);
+//            mPrinter.setAlignMode(1);
+//            mPrinter.setFontZoom(fontsizeTitle, fontsizeTitle);
+            mPrinter.sendRAWData(new byte[]{0x1B, 0x45, 0x1}, null);
+//            mPrinter.sendRawData(boldOn());
+            mPrinter.printText("杭州微盘每日付收款明细", null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            mPrinter.setAlignment(0, null);
+//            mPrinter.setAlignMode(0);
+
+//            mPrinter.setFontZoom(fontsizeContent, fontsizeContent);
+            mPrinter.sendRAWData(new byte[]{0x1B, 0x45, 0x0}, null);
+//            mPrinter.sendRawData(boldOff());
+            mPrinter.printText(divide, null);
+            mPrinter.printText("订单编号：" + SystemClock.uptimeMillis() + "", null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            mPrinter.printText("下单时间：" + formatData(new Date()) + "", null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            mPrinter.printText("支付方式：" + payType, null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            mPrinter.printText(divide, null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            mPrinter.printText(goods + "", null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            mPrinter.printText(divide2, null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+            printGoods(menus, divide2, width);
+            mPrinter.printText(divide, null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
+//            mPrinter.setFontZoom(fontsizeContent, fontsizeContent);
+            mPrinter.printText("感谢使用微盘智慧收银！", null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(4, null);
+            mPrinter.cutPaper(null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,12 +134,12 @@ public class KPrinterPresenter {
     private void printNewline(String str, int width) throws Exception {
         List<String> strings = Utils.getStrList(str, width);
         for (String string : strings) {
-            mPrinter.printText(string);
-            mPrinter.flush();
+            mPrinter.printText(string, null);
+//            mPrinter.flush();
         }
     }
 
-    private void printGoods(ArrayList<MenusBean> menus, int fontsizeContent, String divide2, int width) throws Exception {
+    private void printGoods(ArrayList<MenusBean> menus, String divide2, int width) throws Exception {
         int blank1;
         int blank2;
         float price = 0.00f;
@@ -161,15 +173,17 @@ public class KPrinterPresenter {
             sb.append(addblank(blank2 - 4));
 
             sb.append(listBean.getMoney().replace(ResourcesUtils.getString(context, R.string.units_money), ""));
-            mPrinter.printText(sb.toString() + "");
-            mPrinter.flush();
+            mPrinter.printText(sb.toString() + "", null);
+//            mPrinter.flush();
+            mPrinter.lineWrap(1, null);
             if (name.length() > maxNameWidth) {
                 printNewline(name.substring(maxNameWidth), maxNameWidth);
             }
 
         }
-        mPrinter.printText(divide2);
-        mPrinter.flush();
+        mPrinter.printText(divide2, null);
+//        mPrinter.flush();
+        mPrinter.lineWrap(1, null);
 
         String total = "累计金额：";
         String real = "实际收款：";
@@ -180,15 +194,16 @@ public class KPrinterPresenter {
         sb.append(total);
         sb.append(addblank(blank1));
         sb.append(decimalFormat.format(price));
-        mPrinter.printText(sb.toString() + "");
-        mPrinter.flush();
-
+        mPrinter.printText(sb.toString() + "", null);
+//        mPrinter.flush();
+        mPrinter.lineWrap(1, null);
         sb.setLength(0);
         sb.append(real);
         sb.append(addblank(blank2));
         sb.append(PayMoney);
-        mPrinter.printText(sb.toString() + "");
-        mPrinter.flush();
+        mPrinter.printText(sb.toString() + "", null);
+//        mPrinter.flush();
+        mPrinter.lineWrap(1, null);
         sb.setLength(0);
     }
 
@@ -208,29 +223,6 @@ public class KPrinterPresenter {
         return st;
     }
 
-    private static final byte ESC = 0x1B;// Escape
-
-    /**
-     * 字体加粗
-     */
-    private byte[] boldOn() {
-        byte[] result = new byte[3];
-        result[0] = ESC;
-        result[1] = 69;
-        result[2] = 0xF;
-        return result;
-    }
-
-    /**
-     * 取消字体加粗
-     */
-    private byte[] boldOff() {
-        byte[] result = new byte[3];
-        result[0] = ESC;
-        result[1] = 69;
-        result[2] = 0;
-        return result;
-    }
 
     private boolean isZh() {
         Locale locale = context.getResources().getConfiguration().locale;
@@ -242,59 +234,6 @@ public class KPrinterPresenter {
     }
 
     private byte[] mCmd = new byte[24];
-
-    public synchronized int setCharSize(int hsize, int vsize) {
-        int Width = 0;
-        if (hsize == 0) {
-            Width = 0;
-        }
-        if (hsize == 1) {
-            Width = 16;
-        }
-        if (hsize == 2) {
-            Width = 32;
-        }
-        if (hsize == 3) {
-            Width = 48;
-        }
-        if (hsize == 4) {
-            Width = 64;
-        }
-        if (hsize == 5) {
-            Width = 80;
-        }
-        if (hsize == 6) {
-            Width = 96;
-        }
-
-        if (hsize == 7) {
-            Width = 112;
-        }
-
-        if (Width <= 0) {
-            Width = 0;
-        }
-
-        if (Width >= 112) {
-            Width = 112;
-        }
-
-        if (vsize <= 0) {
-            vsize = 0;
-        }
-
-        if (vsize >= 7) {
-            vsize = 7;
-        }
-
-        int Mul = Width + vsize;
-        this.mCmd[0] = 29;
-        this.mCmd[1] = 33;
-        this.mCmd[2] = (byte) Mul;
-
-        return /*this.mPrinter.writeIO(this.mCmd, 0, 3, 2000)*/1;
-    }
-
 
     private int String_length(String rawString) {
         return rawString.replaceAll("[\\u4e00-\\u9fa5]", "SH").length();
