@@ -6,7 +6,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.blankj.utilcode.util.TimeUtils;
 import com.sunmi.weipan.BaseActivity;
 import com.sunmi.weipan.utils.CountDownHelper;
 import com.sunmi.weipan.R;
@@ -15,15 +14,11 @@ import com.sunmi.weipan.adapter.SusceeAdapter;
 import com.sunmi.weipan.bean.MenusBean;
 import com.sunmi.weipan.fragment.PayModeSettingFragment;
 import com.sunmi.weipan.utils.SharePreferenceUtil;
-import com.szsicod.print.escpos.PrinterAPI;
-import com.szsicod.print.io.InterfaceAPI;
-import com.szsicod.print.io.USBAPI;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,8 +43,6 @@ public class SucessActivity extends BaseActivity {
     ListView lvMenus;
     private SusceeAdapter menusAdapter;
     private DecimalFormat decimalFormat = new DecimalFormat("0.00");
-    private InterfaceAPI io;
-    public PrinterAPI mPrinter = PrinterAPI.getInstance();
     private String PayMoney;
     private int totalCount;
 
@@ -88,7 +81,6 @@ public class SucessActivity extends BaseActivity {
             }
         });
         helper.start();
-//        print(menus);
 
     }
 
@@ -99,66 +91,5 @@ public class SucessActivity extends BaseActivity {
                 finish();
                 break;
         }
-    }
-
-    private void print(final List<MenusBean> list) {
-        if (io == null) {
-            io = new USBAPI(SucessActivity.this);
-        }
-        if (PrinterAPI.SUCCESS == mPrinter.connect(io)) {//连接打印机
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        mPrinter.setAlignMode(1);//0左对齐，1居中，2右对齐
-
-                        mPrinter.printString("\n杭州微盘每日付收款明细");
-                        mPrinter.printString("\n\n\n________________________________");
-                        mPrinter.setAlignMode(0);
-                        mPrinter.printString("\n销售单");
-                        mPrinter.printString("\n--------------------------------\n");
-                        printString("自助收银", "共" + totalCount + "件");
-                        mPrinter.printString("--------------------------------");
-                        mPrinter.printString("\n店员号：032  POS号32");
-                        mPrinter.printString("\n" + TimeUtils.getNowString());
-                        mPrinter.printString("\n--------------------------------\n");
-                        printString("商品名称/数量/单位", "合计");
-                        mPrinter.printString("--------------------------------\n");
-                        float price = 0.00f;
-                        for (MenusBean menu : list) {
-                            printString(menu.getName() + " * " + menu.getCount() + " " + menu.getUnit(), menu.getMoney().replace("¥", "￥"));
-                            price = price + Float.parseFloat(menu.getMoney().substring(1));
-                        }
-                        mPrinter.printString("________________________________");
-                        printString("商品合计", "￥" + price);
-                        printString("优惠金额", "-￥0.00");
-                        printString("优惠券金额", "-￥0.00");
-                        mPrinter.printString("\n");
-                        printString("应付金额", "￥" + price);
-                        printString("实际支付金额", "￥" + PayMoney);
-                        mPrinter.printString("\n依法预付费卡、第三方卡、支付优惠的支付方式其消费金额不再重复开立发票");
-                        mPrinter.printString("\n\n--------------------------------\n\n\n\n\n\n");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-    }
-
-    private void printString(String left, String right) {
-        int lLength = 0;
-        int rLength = 0;
-        try {
-            lLength = left.getBytes("GBK").length;
-            rLength = right.getBytes("GBK").length;
-            mPrinter.setAlignMode(0);//0左对齐，1居中，2右对齐
-            String nullString = "                                ";
-            mPrinter.printString(left + nullString.substring(0, 32 - lLength - rLength) + right, "GBK", true);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Log.i("test", "lLength = " + lLength);
-        Log.i("test", "rLength = " + rLength);
     }
 }

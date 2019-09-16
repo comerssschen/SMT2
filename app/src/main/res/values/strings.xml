@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">每日付自助购物系统</string>
+    <string name="app_name">财通天下自助购物系统</string>
+    <string name="print_name">大道同行财通天下收款明细</string>
+    <string name="print_over_text">感谢使用财通天下智慧收银！</string>
     <!--  more-->
     <!--单位-->
     <string name="units_tin">Can</string>

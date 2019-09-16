@@ -2,7 +2,6 @@ package com.sunmi.weipan.ui;
 
 import android.content.Context;
 import android.os.SystemClock;
-import android.util.Log;
 
 import com.sunmi.weipan.R;
 import com.sunmi.weipan.bean.MenusBean;
@@ -28,9 +27,7 @@ import woyou.aidlservice.jiuiv5.IWoyouService;
 
 public class KPrinterPresenter {
     private Context context;
-    private static final String TAG = "KPrinterPresenter";
     private IWoyouService mPrinter;
-    String unic = "GBK";
     private String PayMoney;
     private DecimalFormat decimalFormat = new DecimalFormat("0.00");
 
@@ -40,9 +37,6 @@ public class KPrinterPresenter {
     }
 
     public void print(ArrayList<MenusBean> menus, String payType) {
-        int fontsizeTitle = 1;
-        int fontsizeContent = 0;
-        int fontsizeFoot = 1;
         String divide = "************************************************" + "";
         String divide2 = "-----------------------------------------------" + "";
         try {
@@ -53,56 +47,36 @@ public class KPrinterPresenter {
             int width = divide2.length() * 5 / 12;
             String goods = formatTitle(width);
             mPrinter.setAlignment(1, null);
-//            mPrinter.setAlignMode(1);
-//            mPrinter.setFontZoom(fontsizeTitle, fontsizeTitle);
             mPrinter.sendRAWData(new byte[]{0x1B, 0x45, 0x1}, null);
-//            mPrinter.sendRawData(boldOn());
-            mPrinter.printText("杭州微盘每日付收款明细", null);
-//            mPrinter.flush();
+            mPrinter.printText(context.getResources().getString(R.string.print_name), null);
             mPrinter.lineWrap(1, null);
             mPrinter.setAlignment(0, null);
-//            mPrinter.setAlignMode(0);
-
-//            mPrinter.setFontZoom(fontsizeContent, fontsizeContent);
             mPrinter.sendRAWData(new byte[]{0x1B, 0x45, 0x0}, null);
-//            mPrinter.sendRawData(boldOff());
             mPrinter.printText(divide, null);
             mPrinter.printText("订单编号：" + SystemClock.uptimeMillis() + "", null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             mPrinter.printText("下单时间：" + formatData(new Date()) + "", null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             mPrinter.printText("支付方式：" + payType, null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             mPrinter.printText(divide, null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             mPrinter.printText(goods + "", null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             mPrinter.printText(divide2, null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             printGoods(menus, divide2, width);
             mPrinter.printText(divide, null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
-//            mPrinter.setFontZoom(fontsizeContent, fontsizeContent);
-            mPrinter.printText("感谢使用微盘智慧收银！", null);
-//            mPrinter.flush();
+            mPrinter.printText(context.getResources().getString(R.string.print_over_text), null);
             mPrinter.lineWrap(4, null);
             mPrinter.cutPaper(null);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private String formatTitle(int width) {
-        Log.e("@@@@@", width + "=======");
-
         String[] title = {
                 "商品名称",
                 "数量",
@@ -113,21 +87,13 @@ public class KPrinterPresenter {
         int blank1 = width - String_length(title[0]);
         int blank2 = width - String_length(title[1]);
         int blank3 = width - String_length(title[2] + title[1]);
-
         sb.append(title[0]);
         sb.append(addblank(blank1));
-
         sb.append(title[1]);
         sb.append(addblank(1));
-
         sb.append(title[2]);
         sb.append(addblank(blank3 - 1));
-
         sb.append(title[3]);
-
-//        int w1 = width / 3;
-//        int w2 = width / 3 + 2;
-//        String str = String.format("%-" + w1 + "s%-" + w2 + "s%s", title[0], title[1], title[2]);
         return sb.toString();
     }
 
@@ -135,7 +101,6 @@ public class KPrinterPresenter {
         List<String> strings = Utils.getStrList(str, width);
         for (String string : strings) {
             mPrinter.printText(string, null);
-//            mPrinter.flush();
         }
     }
 
@@ -146,7 +111,6 @@ public class KPrinterPresenter {
         for (MenusBean menu : menus) {
             price = price + Float.parseFloat(menu.getMoney().substring(1));
         }
-
         boolean isRealDeal = (boolean) SharePreferenceUtil.getParam(context, PayModeSettingFragment.IS_REAL_DEAL, PayModeSettingFragment.default_isRealDeal);
         if (isRealDeal) {
             PayMoney = "" + decimalFormat.format(price);
@@ -159,35 +123,25 @@ public class KPrinterPresenter {
             sb.setLength(0);
             String name = listBean.getName();
             String name1 = name.length() > maxNameWidth ? name.substring(0, maxNameWidth) : "";
-
             blank1 = width - String_length(name.length() > maxNameWidth ? name1 : name) + 1;
             blank2 = width - String_length(listBean.getCount() + listBean.getUnit());
-
             sb.append(name.length() > maxNameWidth ? name1 : name);
             sb.append(addblank(blank1));
-
             sb.append(listBean.getCount());
             sb.append(addblank(4));
-
             sb.append(listBean.getUnit());
             sb.append(addblank(blank2 - 4));
-
             sb.append(listBean.getMoney().replace(ResourcesUtils.getString(context, R.string.units_money), ""));
             mPrinter.printText(sb.toString() + "", null);
-//            mPrinter.flush();
             mPrinter.lineWrap(1, null);
             if (name.length() > maxNameWidth) {
                 printNewline(name.substring(maxNameWidth), maxNameWidth);
             }
-
         }
         mPrinter.printText(divide2, null);
-//        mPrinter.flush();
         mPrinter.lineWrap(1, null);
-
         String total = "累计金额：";
         String real = "实际收款：";
-
         sb.setLength(0);
         blank1 = width * 2 - String_length(total);
         blank2 = width * 2 - String_length(real);
@@ -195,14 +149,12 @@ public class KPrinterPresenter {
         sb.append(addblank(blank1));
         sb.append(decimalFormat.format(price));
         mPrinter.printText(sb.toString() + "", null);
-//        mPrinter.flush();
         mPrinter.lineWrap(1, null);
         sb.setLength(0);
         sb.append(real);
         sb.append(addblank(blank2));
         sb.append(PayMoney);
         mPrinter.printText(sb.toString() + "", null);
-//        mPrinter.flush();
         mPrinter.lineWrap(1, null);
         sb.setLength(0);
     }
@@ -232,8 +184,6 @@ public class KPrinterPresenter {
         else
             return false;
     }
-
-    private byte[] mCmd = new byte[24];
 
     private int String_length(String rawString) {
         return rawString.replaceAll("[\\u4e00-\\u9fa5]", "SH").length();
