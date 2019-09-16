@@ -47,6 +47,7 @@
     </FrameLayout>
 
     <FrameLayout
+        android:visibility="gone"
         android:id="@+id/fl_3"
         android:layout_width="match_parent"
         android:layout_height="66.66dip"
