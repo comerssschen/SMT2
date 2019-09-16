@@ -565,7 +565,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
                 // 交易过程中是否显示UI界面
                 config.processDisplay = true;
 //                // 是否展示交易结果页
-                config.resultDisplay = false;
+                config.resultDisplay = true;
 //                // 是否打印小票
                 config.printTicket = false;
 //                // 指定签购单上的退款订单号类型
@@ -625,6 +625,7 @@ public class MainActivity extends BaseActivity implements View.OnClickListener {
         for (MenusBean bean1 : menus) {
             price = price + Float.parseFloat(bean1.getMoney().substring(1));
         }
+        tvPrice.setContentDescription(decimalFormat.format(price));
         tvPrice.setText(ResourcesUtils.getString(MainActivity.this, R.string.units_money_units) + decimalFormat.format(price));
         menusAdapter.update(menus);
         // 购物车有东西
